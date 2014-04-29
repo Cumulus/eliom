@@ -18,6 +18,8 @@
  *)
 
 
+open Eliom_service
+open Eliom_parameter
 open Eliom_lib
 
 (** This module provides the creation of valid XML content, i.e. XML, SVG,
@@ -44,7 +46,7 @@ module Svg : sig
   type +'a attrib = 'a Eliom_content_core.Svg.attrib
   type uri = Eliom_content_core.Svg.uri
 
-  (** Creation of {e f}unctional HTML5 content (copy-able but not referable).
+  (** Creation of {e f}unctional content (copy-able but not referable).
 
        See {% <<a_api project="tyxml" | module Svg_sigs.T >> %} *)
   module F : module type of Eliom_content_core.Svg.F
@@ -56,10 +58,19 @@ module Svg : sig
         and type uri = uri
 
 
-  (** Creation of HTML5 content with {e D}OM semantics (referable
+  (** Creation of content with {e D}OM semantics (referable
 
        See {% <<a_api project="tyxml" | module Svg_sigs.T >> %} *)
-  module D : module type of Eliom_content_core.Svg.F
+  module D : module type of Eliom_content_core.Svg.D
+        with type Xml.uri = Xml.uri
+        and type Xml.attrib = Xml.attrib
+        and type Xml.elt = Xml.elt
+        with type +'a elt = 'a elt
+        and type 'a attrib = 'a attrib
+        and type uri = uri
+
+  (** Creation of reactive content *)
+  module R : module type of Eliom_content_core.Svg.R
         with type Xml.uri = Xml.uri
         and type Xml.attrib = Xml.attrib
         and type Xml.elt = Xml.elt
@@ -91,11 +102,11 @@ module Svg : sig
         in the list of [e1] children. *)
     val appendChild: ?before:'a elt -> 'b elt ->  'c elt -> unit
 
-    (** The function [appendChilds e1 elts] inserts [elts] as last children
+    (** The function [appendChildren e1 elts] inserts [elts] as last children
         of [e1]. If the optional parameter [~before:e3] is present and if
         [e3] is a child of [e1], then [elts] are inserted before [e3] in
         the list of [e1] children. *)
-    val appendChilds: ?before:'a elt -> 'b elt ->  'c elt list -> unit
+    val appendChildren: ?before:'a elt -> 'b elt ->  'c elt list -> unit
 
     (** [appendChildFirst p c] appends [c] as first child of [p] *)
     val appendChildFirst: 'b elt ->  'c elt -> unit
@@ -114,15 +125,15 @@ module Svg : sig
         list of [e1] children. *)
     val replaceChild: 'a elt -> 'b elt -> 'c elt -> unit
 
-    (** The function [removeAllChild e1] removes [e1] children. *)
-    val removeAllChild: 'a elt -> unit
+    (** The function [removeChildren e1] removes [e1] children. *)
+    val removeChildren: 'a elt -> unit
 
     (** [removeSelf e] removes element e from the DOM. *)
     val removeSelf: 'a elt -> unit
 
-    (** The function [replaceAllChild e1 elts] replaces all the children of
+    (** The function [replaceChildren e1 elts] replaces all the children of
         [e1] by [elt]. *)
-    val replaceAllChild: 'a elt -> 'b elt list -> unit
+    val replaceChildren: 'a elt -> 'b elt list -> unit
 
     (* (\** The function [addEventListener elt evt handler] attach the *)
         (* [handler] for the event [evt] on the element [elt]. See the *)
@@ -147,16 +158,16 @@ module Svg : sig
 
       (** see [appendChild] *)
       val appendChild: ?before:'a elt -> 'b Id.id -> 'c elt -> unit
-      (** see [appendChilds] *)
-      val appendChilds: ?before:'a elt -> 'b Id.id ->  'c elt list -> unit
+      (** see [appendChildren] *)
+      val appendChildren: ?before:'a elt -> 'b Id.id ->  'c elt list -> unit
       (** see [removeChild] *)
       val removeChild: 'a Id.id -> 'b elt -> unit
       (** see [replaceChild] *)
       val replaceChild: 'a Id.id -> 'b elt -> 'c elt -> unit
-      (** see [removeAllChild] *)
-      val removeAllChild: 'a Id.id -> unit
-      (** see [replaceAllChild] *)
-      val replaceAllChild: 'a Id.id -> 'b elt list -> unit
+      (** see [removeChildren] *)
+      val removeChildren: 'a Id.id -> unit
+      (** see [replaceChildren] *)
+      val replaceChildren: 'a Id.id -> 'b elt list -> unit
 
       (* (\** see [addEventListener] *\) *)
       (* val addEventListener: *)
@@ -477,11 +488,11 @@ module Html5 : sig
     (** Append to the body of the document. *)
     val appendToBody: ?before:'a elt -> 'c elt -> unit
 
-    (** The function [appendChilds e1 elts] inserts [elts] as last children
+    (** The function [appendChildren e1 elts] inserts [elts] as last children
         of [e1]. If the optional parameter [~before:e3] is present and if
         [e3] is a child of [e1], then [elts] are inserted before [e3] in
         the list of [e1] children. *)
-    val appendChilds: ?before:'a elt -> 'b elt ->  'c elt list -> unit
+    val appendChildren: ?before:'a elt -> 'b elt ->  'c elt list -> unit
 
     (** [appendChildFirst p c] appends [c] as first child of [p] *)
     val appendChildFirst: 'b elt ->  'c elt -> unit
@@ -500,15 +511,15 @@ module Html5 : sig
         list of [e1] children. *)
     val replaceChild: 'a elt -> 'b elt -> 'c elt -> unit
 
-    (** The function [removeAllChild e1] removes [e1] children. *)
-    val removeAllChild: 'a elt -> unit
+    (** The function [removeChildren e1] removes [e1] children. *)
+    val removeChildren: 'a elt -> unit
 
     (** [removeSelf e] removes element e from the DOM. *)
     val removeSelf: 'a elt -> unit
 
-    (** The function [replaceAllChild e1 elts] replaces all the children of
+    (** The function [replaceChildren e1 elts] replaces all the children of
         [e1] by [elt]. *)
-    val replaceAllChild: 'a elt -> 'b elt list -> unit
+    val replaceChildren: 'a elt -> 'b elt list -> unit
 
     (** The function [addEventListener elt evt handler] attach the
         [handler] for the event [evt] on the element [elt]. See the
@@ -533,16 +544,16 @@ module Html5 : sig
 
       (** see [appendChild] *)
       val appendChild: ?before:'a elt -> 'b Id.id -> 'c elt -> unit
-      (** see [appendChilds] *)
-      val appendChilds: ?before:'a elt -> 'b Id.id ->  'c elt list -> unit
+      (** see [appendChildren] *)
+      val appendChildren: ?before:'a elt -> 'b Id.id ->  'c elt list -> unit
       (** see [removeChild] *)
       val removeChild: 'a Id.id -> 'b elt -> unit
       (** see [replaceChild] *)
       val replaceChild: 'a Id.id -> 'b elt -> 'c elt -> unit
-      (** see [removeAllChild] *)
-      val removeAllChild: 'a Id.id -> unit
-      (** see [replaceAllChild] *)
-      val replaceAllChild: 'a Id.id -> 'b elt list -> unit
+      (** see [removeChildren] *)
+      val removeChildren: 'a Id.id -> unit
+      (** see [replaceChildren] *)
+      val replaceChildren: 'a Id.id -> 'b elt list -> unit
 
       (** see [addEventListener] *)
       val addEventListener:
@@ -866,3 +877,5 @@ module Html5 : sig
   module Of_dom : module type of Eliom_content_core.Html5.Of_dom
 
 end
+
+val force_link : unit

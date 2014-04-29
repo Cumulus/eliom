@@ -3410,8 +3410,10 @@ let relink_test =
     ~get_params:Eliom_parameter.unit
     ()
 
-let global_list = Html5.Id.create_global_elt (ul [li [pcdata "First element"]])
-let local_list = Html5.D.ul [li [pcdata "First element"]]
+let global_list : [`Ul] Eliom_content.Html5.elt
+  = Html5.Id.create_global_elt (ul [li [pcdata "First element"]])
+let local_list : [`Ul] Eliom_content.Html5.elt
+  = Html5.D.ul [li [pcdata "First element"]]
 
 let relink_page () =
   ignore {unit{
@@ -3700,7 +3702,7 @@ let tmpl1_update (id : Html5_types.flow5 Html5.Id.id) (contents : Html5_types.fl
   Eliom_client.onload
     (fun () ->
       debug "Update";
-      Html5.Manip.Named.replaceAllChild %id %contents)
+      Html5.Manip.Named.replaceChildren %id %contents)
 }}
 
 module Tmpl_1 = Eliom_registration.Eliom_tmpl(My_appl)(struct

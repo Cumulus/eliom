@@ -19,6 +19,8 @@ DISTILLERY_BASIC :=basic
 
 IOPTCOMP := $(shell ocamlfind query optcomp)
 
+PREDEP := eliompp_lexer.ml
+
 byte: ${COMPILER} $(DISTILLERY)
 
 config.ml: ../../Makefile.config
@@ -76,12 +78,13 @@ clean:
 	-rm -f ${COMPILER} ${DISTILLERY}
 	-rm -f ${PREDEP}
 distclean: clean
-	-rm -f *~ \#* .\#*
+	-rm -f *~ \#* .\#* .depend
 
 ## Dependencies
 
-depend: ${PREDEP}
-	$(OCAMLDEP) ${LIBS} *.ml *.mli > .depend
+depend: .depend
 
-FORCE:
--include .depend
+.depend: ${PREDEP}
+	$(OCAMLDEP) -pp "camlp4o $(IOPTCOMP)/optcomp.cma" ${LIBS} *.ml *.mli > .depend
+
+include .depend

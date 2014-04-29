@@ -21,19 +21,44 @@ doc:
 
 ### Testing ###
 
-.PHONY: run.local run.opt.local top
+.PHONY: run.local run.opt.local top links
 
 run.local: tests.byte fifo
 	ocsigenserver -c local/etc/${PROJECTNAME}.conf
 
-tests.byte: byte
+tests.byte: byte links
 	${MAKE} -C tests byte
 
 run.opt.local: tests.opt fifo
 	ocsigenserver.opt -c local/etc/${PROJECTNAME}.conf
 
-tests.opt: opt
+tests.opt: opt links
 	${MAKE} -C tests opt
+
+links:
+	-mkdir -p local/var/run
+	-mkdir -p local/var/log
+	-mkdir -p local/var/lib
+	-mkdir -p local/lib/server
+	-mkdir -p local/lib/client
+	cd local/lib ; \
+        ln -sf ../../src/syntax .  ; \
+	cd server ; \
+	ln -sf ../../../src/server/*cmi . ; \
+	ln -sf ../../../src/clientserver/_server/*cmi . ; \
+	ln -sf ../../../src/server2/*cmi . ; \
+	ln -sf ../../../src/server2/extensions/*cmi . ; \
+	ln -sf ../../../src/server2/eliom.cm* . ; \
+	cd ../client ; \
+	ln -sf ../../../src/client/*cmi . ; \
+	ln -sf ../../../src/clientserver/_client/*cmi . ; \
+	ln -sf ../../../src/client2/*cmi . ; \
+	ln -sf ../../../src/client2/eliom_client.cma . ; \
+	ln -sf ../../../src/client2/eliom_client_main.cmo .  ; \
+	ln -sf ../../../src/client2/eliom_client.js .  ; \
+	ln -sf ../../../src/client2/dlleliom_client.so .  ; \
+	ln -sf ../../../src/client2/libeliom_client.a .  ; \
+	cd ../../..
 
 fifo:
 	[ -p local/var/run/${PROJECTNAME}_command ] || \

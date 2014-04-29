@@ -78,7 +78,7 @@ module MakeManip
           ignore(node##insertBefore(get_node elt2, Js.some node3))
 
 
-    let raw_appendChilds ?before node elts =
+    let raw_appendChildren ?before node elts =
       match before with
       | None ->
           List.iter (fun elt2 -> ignore(node##appendChild(get_node elt2))) elts
@@ -94,12 +94,12 @@ module MakeManip
       let node2 = get_unique_node "replaceChild" elt2 in
       ignore(node1##replaceChild(node2, get_node elt3))
 
-    let raw_removeAllChild node =
+    let raw_removeChildren node =
       let childrens = Dom.list_of_nodeList (node##childNodes) in
       List.iter (fun c -> ignore(node##removeChild(c))) childrens
 
-    let raw_replaceAllChild node elts =
-      raw_removeAllChild node;
+    let raw_replaceChildren node elts =
+      raw_removeChildren node;
       List.iter (fun elt -> ignore(node##appendChild(get_node elt))) elts
 
     let nth elt n =
@@ -119,9 +119,9 @@ module MakeManip
       let node = get_unique_node "appendChild" elt1 in
       raw_appendChild ?before node elt2
 
-    let appendChilds ?before elt1 elts =
-      let node = get_unique_node "appendChilds" elt1 in
-      raw_appendChilds ?before node elts
+    let appendChildren ?before elt1 elts =
+      let node = get_unique_node "appendChildren" elt1 in
+      raw_appendChildren ?before node elts
 
     let removeChild elt1 elt2 =
       let node1 = get_unique_node "removeChild" elt1 in
@@ -144,13 +144,13 @@ module MakeManip
       let node1 = get_unique_node "replaceChild" elt1 in
       raw_replaceChild node1 elt2 elt3
 
-    let removeAllChild elt =
-      let node = get_unique_node "removeAllChild" elt in
-      raw_removeAllChild node
+    let removeChildren elt =
+      let node = get_unique_node "removeChildren" elt in
+      raw_removeChildren node
 
-    let replaceAllChild elt elts =
-      let node = get_unique_node "replaceAllChild" elt in
-      raw_replaceAllChild node elts
+    let replaceChildren elt elts =
+      let node = get_unique_node "replaceChildren" elt in
+      raw_replaceChildren node elts
 
     let childNodes elt =
       let node = get_unique_node "childNodes" elt in
@@ -175,9 +175,9 @@ module MakeManip
         let node = Id.get_element' id1 in
         raw_appendChild ?before node elt2
 
-      let appendChilds ?before id1 elts =
+      let appendChildren ?before id1 elts =
         let node = Id.get_element' id1 in
-        raw_appendChilds ?before node elts
+        raw_appendChildren ?before node elts
 
       let removeChild id1 elt2 =
         let node1 = Id.get_element' id1 in
@@ -187,13 +187,13 @@ module MakeManip
         let node1 = Id.get_element' id1 in
         raw_replaceChild node1 elt2 elt3
 
-      let removeAllChild id =
+      let removeChildren id =
         let node = Id.get_element' id in
-        raw_removeAllChild node
+        raw_removeChildren node
 
-      let replaceAllChild id elts =
+      let replaceChildren id elts =
         let node = Id.get_element' id in
-        raw_replaceAllChild node elts
+        raw_replaceChildren node elts
 
     end
 
@@ -266,6 +266,7 @@ module Svg = struct
 
   module F = Svg.F
   module D = Svg.D
+  module R = Svg.R
 
   type 'a elt = 'a F.elt
   type 'a attrib = 'a F.attrib
